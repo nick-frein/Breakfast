@@ -50,7 +50,7 @@ function main() {
             ringCF = mat4.create();
             tmpMat = mat4.create();
             mat4.lookAt(viewMat,
-                vec3.fromValues(4, 2, 2), /* eye */
+                vec3.fromValues(16, -4, 2), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
             mat4.lookAt(topViewMat,
@@ -159,7 +159,7 @@ function drawScene() {
         xPos = 0;
         let yPos = -0.5;
         for (let k = 0; k < 3; k++) {
-            mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, 0));
+            mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, -0.2));
             mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
             //obj.draw(posAttr, colAttr, modelUnif, tmpMat);
             objChair.draw(posAttr, colAttr, modelUnif, tmpMat);

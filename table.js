@@ -23,15 +23,27 @@ class table {
 
         this.leg1Transform = mat4.create();
         let moveLeg1 = vec3.fromValues(-1.5, -1.5, -1);
-        let scaleLeg1 = vec3.fromValues(.6, .6, 2);
+        let scaleLeg1 = vec3.fromValues(.4, .4, 2);
         mat4.translate(this.leg1Transform, this.leg1Transform, moveLeg1);
         mat4.scale(this.leg1Transform, this.leg1Transform, scaleLeg1);
 
         this.leg2Transform = mat4.create();
         let moveLeg2 = vec3.fromValues(-1.5, 1.5, -1);
-        let scaleLeg2 = vec3.fromValues(.6, .6, 2);
+        let scaleLeg2 = vec3.fromValues(.4, .4, 2);
         mat4.translate(this.leg2Transform, this.leg2Transform, moveLeg2);
         mat4.scale(this.leg2Transform, this.leg2Transform, scaleLeg2);
+
+        this.leg3Transform = mat4.create();
+        let moveLeg3 = vec3.fromValues(9.5, -1.5, -1);
+        let scaleLeg3 = vec3.fromValues(.4, .4, 2);
+        mat4.translate(this.leg3Transform, this.leg3Transform, moveLeg3);
+        mat4.scale(this.leg3Transform, this.leg3Transform, scaleLeg3);
+
+        this.leg4Transform = mat4.create();
+        let moveLeg4 = vec3.fromValues(9.5, 1.5, -1);
+        let scaleLeg4 = vec3.fromValues(.4, .4, 2);
+        mat4.translate(this.leg4Transform, this.leg4Transform, moveLeg4);
+        mat4.scale(this.leg4Transform, this.leg4Transform, scaleLeg4);
 
         this.tmp = mat4.create();
     }
@@ -47,5 +59,12 @@ class table {
 
         mat4.mul (this.tmp, coordFrame, this.leg2Transform);
         this.leg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.leg3Transform);
+        this.leg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.leg4Transform);
+        this.leg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
     }
 }

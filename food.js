@@ -136,18 +136,18 @@ class food {
         mat4.scale (this.tart1FrostingTransform, this.tart1FrostingTransform, scaleTart1Frosting);
 
         this.tart2Transform= mat4.create();
-        let moveTart2 = vec3.fromValues (.5, -.8, .4);
+        let moveTart2 = vec3.fromValues (.5, -.8, 0.2);
         let scaleTart2 = vec3.fromValues (.65, 1, .05);
         let rotTart2 = vec3.fromValues (0, 1, 0);
-        mat4.fromRotation(this.tart2Transform, Math.PI/12, rotTart2);
+        mat4.fromRotation(this.tart2Transform, Math.PI/20, rotTart2);
         mat4.translate (this.tart2Transform, this.tart2Transform, moveTart2);
         mat4.scale (this.tart2Transform, this.tart2Transform, scaleTart2);
 
         this.tart2FrostingTransform= mat4.create();
-        let moveTart2Frosting = vec3.fromValues (.5, -.8, .425);
+        let moveTart2Frosting = vec3.fromValues (.5, -.8, .225);
         let scaleTart2Frosting = vec3.fromValues (.5, .9, .025);
         let rotTart2Frosting = vec3.fromValues (0, 1, 0);
-        mat4.fromRotation(this.tart2FrostingTransform, Math.PI/12, rotTart2Frosting);
+        mat4.fromRotation(this.tart2FrostingTransform, Math.PI/20, rotTart2Frosting);
         mat4.translate (this.tart2FrostingTransform, this.tart2FrostingTransform, moveTart2Frosting);
         mat4.scale (this.tart2FrostingTransform, this.tart2FrostingTransform, scaleTart2Frosting);
 
