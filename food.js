@@ -43,7 +43,7 @@ class food {
         this.cup = new Ring(gl, 0.25, 0.3, 0.5,16,4, vec3.fromValues(0xfd/0xff,0xf5/0xff,0xe6/0xff),vec3.fromValues(0xcd/0xff,0xc5/0xff,0xb6/0xff));
         //gl, majRadius, minRadius, majDiv, minDiv, col1, col2
         this.cupHandle = new Torus(gl, 0.2, 0.05, 12, 12, vec3.fromValues(0xfd/0xff,0xf5/0xff,0xe6/0xff), vec3.fromValues(0xfd/0xff,0xf5/0xff,0xe6/0xff));
-        this.coffee = new Cylinder(gl, 0.25,0.25,1,16,vec3.fromValues(0x10/0x21,0x10/0x31,0x15/0x40),
+        this.coffee = new Cylinder(gl, 0.25,0.25,0.75,16,vec3.fromValues(0x10/0x21,0x10/0x31,0x15/0x40),
             vec3.fromValues(0x10/0x21,0x10/0x31,0x15/0x40));
         //this.eggWhite2 = new Cylinder(gl, 0.3, 0.3, 0.1, 16, vec3.fromValues(0xff/0xff, 0xff/0xff, 0xff/0xff), vec3.fromValues(0xff/0xff, 0xff/0xff, 0xff/0xff));
         //this.handleConnector = new Cylinder(gl, 0.3, 0.3, 0.1, 16, vec3.fromValues(0xff/0xff, 0xff/0xff, 0xff/0xff), vec3.fromValues(0xff/0xff, 0xff/0xff, 0xff/0xff));
@@ -231,7 +231,7 @@ class food {
         this.crustCorner.draw(vertexAttr, colorAttr, modelUniform, this.tmp);*/
 
         mat4.mul (this.tmp, coordFrame, this.plateTransform);
-        this.plate.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        //this.plate.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
         mat4.mul (this.tmp, coordFrame, this.tartPlateBottomTransform);
         this.tartPlateBottom.draw(vertexAttr, colorAttr, modelUniform, this.tmp);

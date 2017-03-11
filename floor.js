@@ -13,7 +13,7 @@ class floor {
 
         this.floor1Transform = mat4.create();
         let moveFloor1 = vec3.fromValues(0, 0, -2);
-        let scaleFloor1 = vec3.fromValues(36, 36, 0.1);
+        let scaleFloor1 = vec3.fromValues(24, 24, 0.1);
         mat4.translate(this.floor1Transform, this.floor1Transform, moveFloor1);
         mat4.scale(this.floor1Transform, this.floor1Transform, scaleFloor1);
 

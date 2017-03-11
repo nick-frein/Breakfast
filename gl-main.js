@@ -68,6 +68,7 @@ function main() {
             obj = new food(gl);
             objChair = new chair(gl);
             objFloor = new floor(gl);
+            objTable = new table(gl);
             //obj = new DiamondRing(gl);
             globalAxes = new Axes(gl);
             //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
@@ -142,6 +143,7 @@ function drawScene() {
     mat4.fromTranslation(tmpMat, vec3.fromValues(0, 0, 0));
     mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
     objFloor.draw(posAttr, colAttr, modelUnif, tmpMat);
+    objTable.draw(posAttr, colAttr, modelUnif, tmpMat);
 
 
     if (typeof obj !== 'undefined') {
