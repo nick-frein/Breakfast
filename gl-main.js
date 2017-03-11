@@ -4,7 +4,7 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, ringCF;
+var orthoProjMat, persProjMat, viewMat, topViewMat, ringCF, sideViewMat;
 var axisBuff, tmpMat;
 var globalAxes;
 
@@ -46,10 +46,11 @@ function main() {
             persProjMat = mat4.create();
             viewMat = mat4.create();
             topViewMat = mat4.create();
+            sideViewMat = mat4.create();
             ringCF = mat4.create();
             tmpMat = mat4.create();
             mat4.lookAt(viewMat,
-                vec3.fromValues(2, 2, 2), /* eye */
+                vec3.fromValues(4, 2, 2), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
             mat4.lookAt(topViewMat,
@@ -57,9 +58,15 @@ function main() {
                 vec3.fromValues(0,0,0),
                 vec3.fromValues(0,1,0)
             );
+            mat4.lookAt(sideViewMat,
+                vec3.fromValues(8, -2, 4), /* eye */
+                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(0, 0, 1)
+            );
             gl.uniformMatrix4fv(modelUnif, false, ringCF);
 
-            obj = new pan(gl);
+            obj = new food(gl);
+            objChair = new chair(gl);
             //obj = new DiamondRing(gl);
             globalAxes = new Axes(gl);
             //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
@@ -123,6 +130,7 @@ function render() {
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
     draw3D();
     drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
+    drawSideView();
     // coneSpinAngle += 1;  /* add 1 degree */
     requestAnimationFrame(render);
 }
@@ -131,13 +139,25 @@ function drawScene() {
     globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
 
     if (typeof obj !== 'undefined') {
-        let yPos = -0.5;
-    //    for (let k = 0; k < 3; k++) {
-            mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
+        let xPos = -0.5;
+        for (let k = 0; k < 3; k++) {
+            mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, 0));
             mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
             obj.draw(posAttr, colAttr, modelUnif, tmpMat);
-            yPos += 0.5;
-    //    }
+            //objChair.draw(posAttr, colAttr, modelUnif, tmpMat);
+            xPos += 3.5;
+        }
+
+        xPos = 0;
+        let yPos = -0.5;
+        for (let k = 0; k < 3; k++) {
+            mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, 0));
+            mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
+            //obj.draw(posAttr, colAttr, modelUnif, tmpMat);
+            objChair.draw(posAttr, colAttr, modelUnif, tmpMat);
+            yPos += 3.5;
+            xPos += 3.5;
+        }
     }
 }
 
@@ -145,7 +165,7 @@ function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
     gl.uniformMatrix4fv(viewUnif, false, viewMat);
-    gl.viewport(0, 0, glCanvas.width/2, glCanvas.height);
+    gl.viewport(0, 0, glCanvas.width/3, glCanvas.height);
     drawScene();
 }
 
@@ -153,6 +173,15 @@ function drawTopView() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, orthoProjMat);
     gl.uniformMatrix4fv(viewUnif, false, topViewMat);
-    gl.viewport(glCanvas.width/2, 0, glCanvas.width/2, glCanvas.height);
+    gl.viewport(glCanvas.width/3, 0, glCanvas.width/3, glCanvas.height);
     drawScene();
 }
+
+function drawSideView() {
+    /* We must update the projection and view matrices in the shader */
+    gl.uniformMatrix4fv(projUnif, false, persProjMat);
+    gl.uniformMatrix4fv(viewUnif, false, sideViewMat);
+    gl.viewport(900, 0, glCanvas.width/3, glCanvas.height);
+    drawScene();
+}
+
