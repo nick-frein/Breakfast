@@ -6,22 +6,46 @@ class table {
         //this.panSides = new Ring(gl, 0.55, 0.6, 0.4, 10, 10, vec3.fromValues(220/220, 220/220, 220/220), vec3.fromValues(220/220, 220/220, 220/220));
         //this.panBottom = new Cylinder(gl, 0.575, 0.575, 0.1, 16);
 
-        this.floor1 = new Cube(gl, 1, 1, vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
+        this.table1 = new Cube(gl, 1, 1, vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
             vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
             vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff));
+        this.leg1 = new Cube(gl, 1, 1, vec3.fromValues(0xcd/0xf0,0x85/0xf0,0x3f/0xf0),
+            vec3.fromValues(0xcd/0xf0,0x85/0xf0,0x3f/0xf0),
+            vec3.fromValues(0xcd/0xf0,0x85/0xf0,0x3f/0xf0));
 
+/******************************************************************************************/
 
-        this.floor1Transform = mat4.create();
-        let moveFloor1 = vec3.fromValues(0, 0, -0.1);
-        let scaleFloor1 = vec3.fromValues(12, 4, 0.1);
-        mat4.translate(this.floor1Transform, this.floor1Transform, moveFloor1);
-        mat4.scale(this.floor1Transform, this.floor1Transform, scaleFloor1);
+        this.table1Transform = mat4.create();
+        let moveTable1 = vec3.fromValues(4, 0, -0.1);
+        let scaleTable1 = vec3.fromValues(12, 4, 0.1);
+        mat4.translate(this.table1Transform, this.table1Transform, moveTable1);
+        mat4.scale(this.table1Transform, this.table1Transform, scaleTable1);
+
+        this.leg1Transform = mat4.create();
+        let moveLeg1 = vec3.fromValues(-1.5, -1.5, -1);
+        let scaleLeg1 = vec3.fromValues(.6, .6, 2);
+        mat4.translate(this.leg1Transform, this.leg1Transform, moveLeg1);
+        mat4.scale(this.leg1Transform, this.leg1Transform, scaleLeg1);
+
+        this.leg2Transform = mat4.create();
+        let moveLeg2 = vec3.fromValues(-1.5, 1.5, -1);
+        let scaleLeg2 = vec3.fromValues(.6, .6, 2);
+        mat4.translate(this.leg2Transform, this.leg2Transform, moveLeg2);
+        mat4.scale(this.leg2Transform, this.leg2Transform, scaleLeg2);
 
         this.tmp = mat4.create();
     }
 
+/******************************************************************************************/
+
     draw (vertexAttr, colorAttr, modelUniform, coordFrame) {
-        mat4.mul (this.tmp, coordFrame, this.floor1Transform);
-        this.floor1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+        mat4.mul (this.tmp, coordFrame, this.table1Transform);
+        this.table1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.leg1Transform);
+        this.leg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.leg2Transform);
+        this.leg1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
     }
 }

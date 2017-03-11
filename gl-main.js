@@ -59,8 +59,8 @@ function main() {
                 vec3.fromValues(0,1,0)
             );
             mat4.lookAt(sideViewMat,
-                vec3.fromValues(8, -2, 4), /* eye */
-                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(6, -5, 2), /* eye */
+                vec3.fromValues(3, -2, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)
             );
             gl.uniformMatrix4fv(modelUnif, false, ringCF);
