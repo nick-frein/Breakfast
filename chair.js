@@ -5,17 +5,20 @@ class chair {
     constructor (gl) {
         this.chairleg1 = new Cube(gl, 1, 1,vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
             vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
+        this.chairleg3 = new Cylinder(gl,1,1,1,6,vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff),
+            vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
         this.chairleg2 = new Cube(gl, 1, 1,vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
             vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
-        this.chairleg3 = new Cube(gl, 1, 1,vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
-            vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
-        this.chairleg4 = new Cube(gl, 1, 1,vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
-            vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
+        //this.chairleg3 = new Cube(gl, 1, 1,vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
+        //    vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
+        this.chairleg4 = new Cylinder(gl,1,1,1,6,vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff),
+            vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
         this.chairbot = new Cube(gl, 1, 1,vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
             vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
         this.chairback = new Cube(gl, 1, 1,vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),
             vec3.fromValues(0xcd/0xff,0x85/0xff,0x3f/0xff),vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
-
+        this.chairCorner = new UniSphere(gl, 0.5, 6, vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff),
+            vec3.fromValues(0xa0/0xff,0x52/0xff,0x2d/0xff));
 
 
         this.leg1Transform= mat4.create();
@@ -32,13 +35,13 @@ class chair {
 
         this.leg3Transform= mat4.create();
         let moveLeg3 = vec3.fromValues (.25, -3, -1);
-        let scaleLeg3 = vec3.fromValues (.1, .1, 1);
+        let scaleLeg3 = vec3.fromValues (.075, .075, 4);
         mat4.translate (this.leg3Transform, this.leg3Transform, moveLeg3);
         mat4.scale (this.leg3Transform, this.leg3Transform, scaleLeg3);
 
         this.leg4Transform= mat4.create();
         let moveLeg4 = vec3.fromValues (1.25, -3, -1);
-        let scaleLeg4 = vec3.fromValues (.1, .1, 1);
+        let scaleLeg4 = vec3.fromValues (.075, .075, 4);
         mat4.translate (this.leg4Transform, this.leg4Transform, moveLeg4);
         mat4.scale (this.leg4Transform, this.leg4Transform, scaleLeg4);
 
@@ -53,6 +56,18 @@ class chair {
         let scaleBack = vec3.fromValues (1.1, .1, 1.5);
         mat4.translate (this.chairBackTransform, this.chairBackTransform, moveBack);
         mat4.scale (this.chairBackTransform, this.chairBackTransform, scaleBack);
+
+        this.chairCornerTransform= mat4.create();
+        let moveCorner = vec3.fromValues (0.25, -3, 1);
+        let scaleCorner = vec3.fromValues (0.15, 0.15, 0.15);
+        mat4.translate (this.chairCornerTransform, this.chairCornerTransform, moveCorner);
+        mat4.scale (this.chairCornerTransform, this.chairCornerTransform, scaleCorner);
+
+        this.chairCorner2Transform= mat4.create();
+        let moveCorner2 = vec3.fromValues (1.25, -3, 1);
+        let scaleCorner2 = vec3.fromValues (0.15, 0.15, 0.15);
+        mat4.translate (this.chairCorner2Transform, this.chairCorner2Transform, moveCorner2);
+        mat4.scale (this.chairCorner2Transform, this.chairCorner2Transform, scaleCorner2);
 
         this.tmp = mat4.create();
     }
@@ -79,5 +94,11 @@ class chair {
 
         mat4.mul (this.tmp, coordFrame, this.chairBackTransform);
         this.chairback.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.chairCornerTransform);
+        this.chairCorner.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.chairCorner2Transform);
+        this.chairCorner.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
     }
 }

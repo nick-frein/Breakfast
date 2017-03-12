@@ -50,7 +50,7 @@ function main() {
             ringCF = mat4.create();
             tmpMat = mat4.create();
             mat4.lookAt(viewMat,
-                vec3.fromValues(16, -4, 2), /* eye */
+                vec3.fromValues(14, -3, 2), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
                 vec3.fromValues(0, 0, 1)); /* up */
             mat4.lookAt(topViewMat,
