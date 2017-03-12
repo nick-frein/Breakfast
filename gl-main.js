@@ -138,7 +138,7 @@ function render() {
 }
 
 function drawScene() {
-    globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
+    //globalAxes.draw(posAttr, colAttr, modelUnif, IDENTITY);
 
     mat4.fromTranslation(tmpMat, vec3.fromValues(0, 0, 0));
     mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
