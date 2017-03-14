@@ -51,6 +51,9 @@ class food {
         this.coffee = new Cylinder(gl, 0.25,0.25,0.75,16,vec3.fromValues(0x10/0x21,0x10/0x31,0x15/0x40),
             vec3.fromValues(0x10/0x21,0x10/0x31,0x15/0x40));
 
+        this.forkHandle = new Cube(gl, .6, 1, vec3.fromValues(0.6,0.6,0.6),
+            vec3.fromValues(0.6,0.6,0.6), vec3.fromValues(0.6,0.6,0.6));
+
 /******************************************************************************************/
     // Transformations
 /******************************************************************************************/
@@ -172,13 +175,56 @@ class food {
         this.cupHandleTransform= mat4.create();
         let moveCupHandle = vec3.fromValues (-0.1, 0.1, -0.3);
         let rotCupHandle = vec3.fromValues (1, 1, 0);
+        let scaleCupHandle = vec3.fromValues (0.75, 0.75, 1);
         mat4.fromRotation(this.cupHandleTransform, Math.PI/2, rotCupHandle);
         mat4.translate (this.cupHandleTransform, this.cupHandleTransform, moveCupHandle);
+        mat4.scale (this.cupHandleTransform, this.cupHandleTransform, scaleCupHandle);
 
         this.coffeeTransform= mat4.create();
         let moveCoffee = vec3.fromValues (-0.5, 0, 0);
         mat4.translate (this.coffeeTransform, this.coffeeTransform, moveCoffee);
 
+/******************************************************************************************/
+
+        this.forkHandleTransform= mat4.create();
+        let moveForkHandle = vec3.fromValues (2.25, -1, -0.05);
+        let scaleForkHandle = vec3.fromValues (0.2, 1, 0.025);
+        //let rotTart2Frosting = vec3.fromValues (0, 1, 0);
+        //mat4.fromRotation(this.tart2FrostingTransform, Math.PI/20, rotTart2Frosting);
+        mat4.translate (this.forkHandleTransform, this.forkHandleTransform, moveForkHandle);
+        mat4.scale (this.forkHandleTransform, this.forkHandleTransform, scaleForkHandle);
+
+        this.forkTransform= mat4.create();
+        let moveFork = vec3.fromValues (2.25, -0.7, -0.05);
+        let scaleFork = vec3.fromValues (0.5, 0.4, 0.025);
+        //let rotTart2Frosting = vec3.fromValues (0, 1, 0);
+        //mat4.fromRotation(this.tart2FrostingTransform, Math.PI/20, rotTart2Frosting);
+        mat4.translate (this.forkTransform, this.forkTransform, moveFork);
+        mat4.scale (this.forkTransform, this.forkTransform, scaleFork);
+
+        this.fork1Transform= mat4.create();
+        let moveFork1 = vec3.fromValues (2.25, -0.5, -0.05);
+        let scaleFork1 = vec3.fromValues (0.1, 0.4, 0.025);
+        //let rotTart2Frosting = vec3.fromValues (0, 1, 0);
+        //mat4.fromRotation(this.tart2FrostingTransform, Math.PI/20, rotTart2Frosting);
+        mat4.translate (this.fork1Transform, this.fork1Transform, moveFork1);
+        mat4.scale (this.fork1Transform, this.fork1Transform, scaleFork1);
+
+        this.fork2Transform= mat4.create();
+        let moveFork2 = vec3.fromValues (2.35, -0.5, -0.05);
+        let scaleFork2 = vec3.fromValues (0.1, 0.4, 0.025);
+        //let rotTart2Frosting = vec3.fromValues (0, 1, 0);
+        //mat4.fromRotation(this.tart2FrostingTransform, Math.PI/20, rotTart2Frosting);
+        mat4.translate (this.fork2Transform, this.fork2Transform, moveFork2);
+        mat4.scale (this.fork2Transform, this.fork2Transform, scaleFork2);
+
+        this.fork3Transform= mat4.create();
+        let moveFork3 = vec3.fromValues (2.15, -0.5, -0.05);
+        let scaleFork3 = vec3.fromValues (0.1, 0.4, 0.025);
+        //let rotTart2Frosting = vec3.fromValues (0, 1, 0);
+        //mat4.fromRotation(this.tart2FrostingTransform, Math.PI/20, rotTart2Frosting);
+        mat4.translate (this.fork3Transform, this.fork3Transform, moveFork3);
+        mat4.scale (this.fork3Transform, this.fork3Transform, scaleFork3);
 
         this.tmp = mat4.create();
     }
@@ -257,5 +303,20 @@ class food {
 
         mat4.mul (this.tmp, coordFrame, this.coffeeTransform);
         this.coffee.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.forkHandleTransform);
+        this.forkHandle.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.forkTransform);
+        this.forkHandle.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.fork1Transform);
+        this.forkHandle.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.fork2Transform);
+        this.forkHandle.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul (this.tmp, coordFrame, this.fork3Transform);
+        this.forkHandle.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
     }
 }
