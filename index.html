@@ -19,6 +19,7 @@
     <script src="food.js"></script>
     <script src="chair.js"></script>
     <script src="table.js"></script>
+    <script src="toaster.js"></script>
     <script src="gl-main.js"></script>
     <style>
         html, body {
@@ -35,7 +36,38 @@
     </style>
 </head>
 <body onload="main()">
+
+<div id="intro">
+    <p>
+        X, Y, and Z to move. R to rotate.
+    </p>
+    <table align="center">
+        <tr>
+            <td>
+                <select id="objselector">
+                    <option value="0">Camera</option>
+                    <option value="1">Chairs</option>
+                    <option value="2">Toast</option>
+                    <option value="3">Food</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                X:<input id="rotx" type="range" min="-90" max="90" value="0">
+            </td>
+            <td>
+                Y:<input id="roty" type="range" min="-90" max="90" value="0">
+            </td>
+            <td>
+                Z:<input id="rotz" type="range" min="-180" max="180" value="0">
+            </td>
+        </tr>
+    </table>
+</div>
+
 <canvas id="gl-canvas"></canvas>
 <div id="msg" style="text-align: center; font-size: 18pt"></div>
+<div id="info">Use numbers 1 2 3 and 4 to change camera angles</div>
 </body>
 </html>

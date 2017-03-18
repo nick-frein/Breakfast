@@ -4,7 +4,7 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, ringCF, sideViewMat;
+var orthoProjMat, persProjMat, viewMat, topViewMat, ringCF, foodCF, toastCF, rotCF, sideViewMat;
 var axisBuff, tmpMat;
 var globalAxes;
 
@@ -15,9 +15,12 @@ var posAttr, colAttr;
 var projUnif, viewUnif, modelUnif;
 
 const IDENTITY = mat4.create();
-var coneSpinAngle;
+var spinAngle, spinAngle2, moveTo;
+var toggle;
 var obj;
 var shaderProg;
+var currentObj = 0;
+
 
 function main() {
     glCanvas = document.getElementById("gl-canvas");
@@ -27,6 +30,12 @@ function main() {
     gl.bindBuffer(gl.ARRAY_BUFFER, axisBuff);
     window.addEventListener("resize", resizeHandler, false);
     window.addEventListener("keypress", keyboardHandler, false);
+
+    document.getElementById("objselector").addEventListener('change', ev => {
+        currentObj = ev.currentTarget.value;
+    });
+
+
     ShaderUtils.loadFromFile(gl, "vshader.glsl", "fshader.glsl")
         .then (prog => {
             shaderProg = prog;
@@ -48,7 +57,11 @@ function main() {
             topViewMat = mat4.create();
             sideViewMat = mat4.create();
             ringCF = mat4.create();
+            toastCF = mat4.create();
+            chairCF = mat4.create();
+            rotCF = mat4.create();
             tmpMat = mat4.create();
+            //tmpMat2 = mat4.create();
             mat4.lookAt(viewMat,
                 vec3.fromValues(10, -3, 2), /* eye */
                 vec3.fromValues(0, 0, 0), /* focal point */
@@ -67,21 +80,26 @@ function main() {
                 vec3.fromValues(3, -2, 0),
                 vec3.fromValues(0, 0, 1)
             );*/
-            mat4.lookAt(sideViewMat,
+           /* mat4.lookAt(sideViewMat,
                 vec3.fromValues(0, -7, 0),
                 vec3.fromValues(3, 0, 0),
                 vec3.fromValues(0, 0, 1)
-            );
+            );*/
             gl.uniformMatrix4fv(modelUnif, false, ringCF);
 
             obj = new food(gl);
             objChair = new chair(gl);
             objFloor = new floor(gl);
             objTable = new table(gl);
+            objBread = new bread(gl);
             //obj = new DiamondRing(gl);
             globalAxes = new Axes(gl);
             //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
-            coneSpinAngle = 0;
+            toggle = 0;
+            spinAngle = 0;
+            spinAngle2 = 6;
+            moveTo = 0;
+
             resizeHandler();
             render();
         });
@@ -106,33 +124,152 @@ function resizeHandler() {
 }
 
 function keyboardHandler(event) {
-    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 1, 0, 0));
-    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-1, 0, 0));
-    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 1, 0));
-    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-1, 0));
-    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, 1));
-    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-1));
+    const transXpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0.5, 0, 0));
+    const transXneg = mat4.fromTranslation(mat4.create(), vec3.fromValues(-0.5, 0, 0));
+    const transYpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0.5, 0));
+    const transYneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0,-0.5, 0));
+    const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, 0.5));
+    const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-0.5));
+
+    const rotZ = mat4.fromZRotation(mat4.create(), spinAngle2 * Math.PI/180.0);
+
     switch (event.key) {
+        case "1":
+            mat4.lookAt(viewMat,
+                vec3.fromValues(10, -3, 2), /* eye */
+                vec3.fromValues(0, 0, 0), /* focal point */
+                vec3.fromValues(0, 0, 1));
+            break;
+        case "2":
+        mat4.lookAt(viewMat,
+            vec3.fromValues(0,0,2),
+            vec3.fromValues(0,0,0),
+            vec3.fromValues(0,1,0));
+            break;
+        case "3":
+            mat4.lookAt(viewMat,
+                vec3.fromValues(6, -5, 2),
+                vec3.fromValues(3, -2, 0),
+                vec3.fromValues(0, 0, 1)
+            );
+            break;
+        case "4":
+            mat4.lookAt(viewMat,
+                vec3.fromValues(0, -7, 0),
+                vec3.fromValues(3, 0, 0),
+                vec3.fromValues(0, 0, 1)
+            );
+            break;
         case "x":
-            mat4.multiply(ringCF, transXneg, ringCF);  // ringCF = Trans * ringCF
+            if(currentObj==0) {
+                mat4.multiply(ringCF, transXneg, ringCF);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, transXneg, chairCF);
+                mat4.multiply(toastCF, transXneg, toastCF);
+            }
+            if(currentObj==1) {
+                mat4.multiply(chairCF, transXneg, chairCF);  // ringCF = Trans * ringCF
+            }
+            if(currentObj==2)
+                mat4.multiply(toastCF, transXneg, toastCF);  // ringCF = Trans * ringCF
             break;
+
         case "X":
-            mat4.multiply(ringCF, transXpos, ringCF);  // ringCF = Trans * ringCF
+            if(currentObj==0) {
+                mat4.multiply(ringCF, transXpos, ringCF);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, transXpos, chairCF);
+                mat4.multiply(toastCF, transXpos, toastCF);
+            }
+            if(currentObj==1) {
+                mat4.multiply(chairCF, transXpos, chairCF);  // ringCF = Trans * ringCF
+            }
+            if(currentObj==2)
+                mat4.multiply(toastCF, transXpos, toastCF);  // ringCF = Trans * ringCF
             break;
+
         case "y":
-            mat4.multiply(ringCF, transYneg, ringCF);  // ringCF = Trans * ringCF
+            if(currentObj==0) {
+                mat4.multiply(ringCF, transYneg, ringCF);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, transYneg, chairCF);
+                mat4.multiply(toastCF, transYneg, toastCF);
+            }
+            if(currentObj==1) {
+                mat4.multiply(chairCF, transYneg, chairCF);  // ringCF = Trans * ringCF
+            }
+            if(currentObj==2) {
+                mat4.multiply(toastCF, transYneg, toastCF);  // ringCF = Trans * ringCF
+            }
             break;
         case "Y":
-            mat4.multiply(ringCF, transYpos, ringCF);  // ringCF = Trans * ringCF
+            if(currentObj==0) {
+                mat4.multiply(ringCF, transYpos, ringCF);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, transYpos, chairCF);
+                mat4.multiply(toastCF, transYpos, toastCF);
+            }
+            if(currentObj==1) {
+                mat4.multiply(chairCF, transYpos, chairCF);  // ringCF = Trans * ringCF
+            }
+            if(currentObj==2) {
+                mat4.multiply(toastCF, transYpos, toastCF);  // ringCF = Trans * ringCF
+            }
             break;
         case "z":
-            mat4.multiply(ringCF, transZneg, ringCF);  // ringCF = Trans * ringCF
+            if(currentObj==0) {
+                mat4.multiply(ringCF, transZneg, ringCF);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, transZneg, chairCF);
+                mat4.multiply(toastCF, transZneg, toastCF);
+            }
+            if(currentObj==1) {
+                mat4.multiply(chairCF, transZneg, chairCF);  // ringCF = Trans * ringCF
+            }
+            if(currentObj==2) {
+                mat4.multiply(toastCF, transZneg, toastCF);  // ringCF = Trans * ringCF
+            }
             break;
         case "Z":
-            mat4.multiply(ringCF, transZpos, ringCF);  // ringCF = Trans * ringCF
+            if(currentObj==0) {
+                mat4.multiply(ringCF, transZpos, ringCF);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, transZpos, chairCF);
+                mat4.multiply(toastCF, transZpos, toastCF);
+            }
+            if(currentObj==1) {
+                mat4.multiply(chairCF, transZpos, chairCF);  // ringCF = Trans * ringCF
+            }
+            if(currentObj==2) {
+                mat4.multiply(toastCF, transZpos, toastCF);  // ringCF = Trans * ringCF
+            }
+            break;
+
+        case "r":
+            //spinAngle2 = spinAngle2+0.1;
+            spinAngle2 = 6;
+            if(currentObj==0) {
+                mat4.multiply(ringCF, ringCF, rotZ);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, chairCF, rotZ);
+                mat4.multiply(toastCF, toastCF, rotZ);
+            }
+            if(currentObj==1) {
+                mat4.multiply(chairCF, chairCF, rotZ);  // ringCF = Trans * ringCF
+            }
+            if(currentObj==2)
+                mat4.multiply(toastCF, toastCF, rotZ);  // ringCF = Trans * ringCF
+            break;
+
+        case "R":
+            //spinAngle2 = spinAngle2+0.1;
+            spinAngle2 = -6;
+            if(currentObj==0) {
+                mat4.multiply(ringCF, ringCF, rotZ);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, chairCF, rotZ);
+                mat4.multiply(toastCF, toastCF, rotZ);
+            }
+            if(currentObj==1) {
+                mat4.multiply(chairCF, chairCF, rotZ);  // ringCF = Trans * ringCF
+            }
+            if(currentObj==2)
+                mat4.multiply(toastCF, toastCF, rotZ);  // ringCF = Trans * ringCF
             break;
     }
-    textOut.innerHTML = "Ring origin (" + ringCF[12].toFixed(1) + ", "
+    textOut.innerHTML = "Current Location (" + ringCF[12].toFixed(1) + ", "
         + ringCF[13].toFixed(1) + ", "
         + ringCF[14].toFixed(1) + ")";
 }
@@ -141,8 +278,25 @@ function render() {
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
     draw3D();
     //drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
-    drawSideView();
-    // coneSpinAngle += 1;  /* add 1 degree */
+    //drawSideView();
+
+    if(spinAngle<=180)
+        spinAngle += 2;  /* add 1 degree */
+
+    if(moveTo >= 1.5) {
+        toggle = 1;
+    } else if(moveTo < 0) {
+        toggle = 0;
+        spinAngle = 0;
+    }
+
+
+
+    if(toggle ==1) {
+        moveTo = moveTo - 0.02;
+    } else {
+        moveTo = moveTo + 0.02;
+    }
     requestAnimationFrame(render);
 }
 
@@ -152,30 +306,49 @@ function drawScene() {
     mat4.fromTranslation(tmpMat, vec3.fromValues(0, 0, 0));
     mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
     objFloor.draw(posAttr, colAttr, modelUnif, tmpMat);
-    objTable.draw(posAttr, colAttr, modelUnif, tmpMat);
+    //objTable.draw(posAttr, colAttr, modelUnif, tmpMat);
 
 
     if (typeof obj !== 'undefined') {
-        let xPos = -0.5;
-        for (let k = 0; k < 3; k++) {
-            mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, 0));
-            mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
-            obj.draw(posAttr, colAttr, modelUnif, tmpMat);
-            //objChair.draw(posAttr, colAttr, modelUnif, tmpMat);
-            xPos += 3.5;
+        let yPos = 0;
+
+        for(let i = 0; i < 4; i++) {
+            let xPos = -0.5;
+            mat4.fromTranslation(tmpMat, vec3.fromValues(0, yPos, 0));
+            mat4.multiply(tmpMat, ringCF, tmpMat);
+            objTable.draw(posAttr, colAttr, modelUnif, tmpMat);
+            for (let k = 0; k < 3; k++) {
+                mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, yPos, 0));
+                mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
+                obj.draw(posAttr, colAttr, modelUnif, tmpMat);
+                //objChair.draw(posAttr, colAttr, modelUnif, tmpMat);
+                xPos += 3.5;
+            }
+
+            xPos = 0;
+            for (let k = 0; k < 3; k++) {
+                //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
+                let chairTranslate = mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, yPos, -0.2));
+                let tmp3 = mat4.multiply(mat4.create(), chairTranslate, tmpMat);   // tmp = ringCF * tmpMat
+                tmp3 = mat4.multiply(tmp3, chairCF, tmp3);
+                objChair.draw(posAttr, colAttr, modelUnif, tmp3);
+
+                xPos += 3.5;
+            }
+            yPos += -6;
+
+            mat4.fromTranslation(tmpMat, vec3.fromValues(0, 0, 0));
+            let breadRot = mat4.fromYRotation(mat4.create(), spinAngle * Math.PI/180.0);
+            let breadTranslate = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, moveTo));
+            //mat4.rotateX(mat4.create(), spinAngle * Math.PI/180.0);
+            let tmp2 = mat4.multiply(mat4.create(), breadTranslate, breadRot);   // tmp = ringCF * tmpMat
+            tmp2 = mat4.multiply(tmp2, toastCF, tmp2);
+            objBread.draw(posAttr, colAttr, modelUnif, tmp2);
+            globalAxes.draw(posAttr, colAttr, modelUnif, tmp2);
         }
 
-        xPos = 0;
-        let yPos = -0.5;
-        for (let k = 0; k < 3; k++) {
-            //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
-            mat4.fromTranslation(tmpMat, vec3.fromValues(xPos, 0, -0.2));
-            mat4.multiply(tmpMat, ringCF, tmpMat);   // tmp = ringCF * tmpMat
-            //obj.draw(posAttr, colAttr, modelUnif, tmpMat);
-            objChair.draw(posAttr, colAttr, modelUnif, tmpMat);
-            yPos += 3.5;
-            xPos += 3.5;
-        }
+
+
     }
 }
 
@@ -183,7 +356,7 @@ function draw3D() {
     /* We must update the projection and view matrices in the shader */
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
     gl.uniformMatrix4fv(viewUnif, false, viewMat);
-    gl.viewport(0, 0, glCanvas.width/2, glCanvas.height);
+    gl.viewport(0, 0, glCanvas.width, glCanvas.height);
     drawScene();
 }
 
@@ -194,11 +367,11 @@ function draw3D() {
     drawScene();
 }*/
 
-function drawSideView() {
-    /* We must update the projection and view matrices in the shader */
+/*function drawSideView() {
+    /* We must update the projection and view matrices in the shader
     gl.uniformMatrix4fv(projUnif, false, persProjMat);
     gl.uniformMatrix4fv(viewUnif, false, sideViewMat);
     gl.viewport(glCanvas.width/2, 0, glCanvas.width/3, glCanvas.height);
     drawScene();
-}
+}*/
 
