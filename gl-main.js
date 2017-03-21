@@ -23,6 +23,7 @@ var currentObj = 0;
 var inc = 0.1;
 var timer = 0;
 var currentAxis = 10;  // x=10  y=11  z=12
+var pause = false;
 
 function main() {
     glCanvas = document.getElementById("gl-canvas");
@@ -300,6 +301,13 @@ function keyboardHandler(event) {
             if(currentObj==2)
                 mat4.multiply(toastCF, toastCF, currentRot);  // ringCF = Trans * ringCF
             break;
+        case "p":
+            if(pause == true) {
+                pause = false;
+            } else {
+                pause = true;
+            }
+            break;
     }
     textOut.innerHTML = "Current Location (" + ringCF[12].toFixed(1) + ", "
         + ringCF[13].toFixed(1) + ", "
@@ -311,39 +319,41 @@ function render() {
     draw3D();
     //drawTopView(); /* looking at the XY plane, Z-axis points towards the viewer */
     //drawSideView();
+    if(pause == false) {
+        if (spinAngle <= 180)
+            spinAngle -= 4.5;
+        /* add 1 degree */
 
-    if(spinAngle<=180)
-        spinAngle -= 4.5;  /* add 1 degree */
+        if (moveTo >= 1.5) {
+            toggle = 1; //move down
+        } else if (moveTo <= -1.7) {
+            //toggle = 0;
+            //spinAngle = 0;
+            //moveTo=0;
+            //moveTo2=0;
+            spinAngle = -90;
+            moveTo = -1.7;
+            moveTo2 = -1.6;
+            //move
+            timer++;
+        }
 
-    if(moveTo >= 1.5) {
-        toggle = 1; //move down
-    } else if(moveTo <= -1.7) {
-        //toggle = 0;
-        //spinAngle = 0;
-        //moveTo=0;
-        //moveTo2=0;
-        spinAngle = -90;
-        moveTo = -1.7;
-        moveTo2 = -1.6;
-        //move
-        timer++;
-    }
+        if (timer >= 100) {
+            timer = 0;
+            toggle = 0;
+            spinAngle = 0;
+            moveTo = 0;
+            moveTo2 = 0;
+        }
 
-    if(timer>=100) {
-        timer = 0;
-        toggle = 0;
-        spinAngle = 0;
-        moveTo=0;
-        moveTo2=0;
-    }
-
-    if(toggle ==1) {
-        moveTo = moveTo - 0.04;
-        moveTo2 = moveTo2 - 0.02;
-        inc =0.1;
-    } else {
-        moveTo = moveTo + inc;
-        inc = inc-0.002;
+        if (toggle == 1) {
+            moveTo = moveTo - 0.04;
+            moveTo2 = moveTo2 - 0.02;
+            inc = 0.1;
+        } else {
+            moveTo = moveTo + inc;
+            inc = inc - 0.002;
+        }
     }
     requestAnimationFrame(render);
 }
