@@ -17,13 +17,13 @@ class bread {
         /**************************************************************************************************/
 
         this.toastTransform = mat4.create();
-        let moveToast = vec3.fromValues(0, 1, 0.1);
+        let moveToast = vec3.fromValues(0, 0, 0);
         let scaleToast = vec3.fromValues(0.15, 0.75, 0.75);
         mat4.translate(this.toastTransform, this.toastTransform, moveToast);
         mat4.scale(this.toastTransform, this.toastTransform, scaleToast);
 
         this.crustTransform = mat4.create();
-        let moveCrust = vec3.fromValues(0, 1, 0.1);
+        let moveCrust = vec3.fromValues(0, 0, 0);
         let scaleCrust = vec3.fromValues(0.125, 0.8, 0.8);
         mat4.translate(this.crustTransform, this.crustTransform, moveCrust);
         mat4.scale(this.crustTransform, this.crustTransform, scaleCrust);

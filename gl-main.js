@@ -4,7 +4,7 @@
 
 var gl;
 var glCanvas, textOut;
-var orthoProjMat, persProjMat, viewMat, topViewMat, ringCF, foodCF, toastCF, rotCF, sideViewMat;
+var orthoProjMat, persProjMat, viewMat, topViewMat, ringCF, foodCF, toastCF, toasterCF, rotCF, sideViewMat;
 var axisBuff, tmpMat;
 var globalAxes;
 
@@ -15,12 +15,14 @@ var posAttr, colAttr;
 var projUnif, viewUnif, modelUnif;
 
 const IDENTITY = mat4.create();
-var spinAngle, spinAngle2, moveTo;
+var spinAngle, spinAngle2, moveTo, moveTo2;
 var toggle;
 var obj;
 var shaderProg;
 var currentObj = 0;
-
+var inc = 0.1;
+var timer = 0;
+var currentAxis = 10;  // x=10  y=11  z=12
 
 function main() {
     glCanvas = document.getElementById("gl-canvas");
@@ -33,6 +35,10 @@ function main() {
 
     document.getElementById("objselector").addEventListener('change', ev => {
         currentObj = ev.currentTarget.value;
+    });
+
+    document.getElementById("axisselector").addEventListener('change', ev => {
+        currentAxis = ev.currentTarget.value;
     });
 
 
@@ -58,6 +64,7 @@ function main() {
             sideViewMat = mat4.create();
             ringCF = mat4.create();
             toastCF = mat4.create();
+            toasterCF = mat4.create();
             chairCF = mat4.create();
             rotCF = mat4.create();
             tmpMat = mat4.create();
@@ -92,6 +99,7 @@ function main() {
             objFloor = new floor(gl);
             objTable = new table(gl);
             objBread = new bread(gl);
+            objToaster = new toaster(gl);
             //obj = new DiamondRing(gl);
             globalAxes = new Axes(gl);
             //mat4.rotateX(ringCF, ringCF, -Math.PI/2);
@@ -99,6 +107,7 @@ function main() {
             spinAngle = 0;
             spinAngle2 = 6;
             moveTo = 0;
+            moveTo2 = 0;
 
             resizeHandler();
             render();
@@ -131,7 +140,22 @@ function keyboardHandler(event) {
     const transZpos = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0, 0.5));
     const transZneg = mat4.fromTranslation(mat4.create(), vec3.fromValues( 0, 0,-0.5));
 
-    const rotZ = mat4.fromZRotation(mat4.create(), spinAngle2 * Math.PI/180.0);
+    var rotX = mat4.fromXRotation(mat4.create(), spinAngle2 * Math.PI/180.0);
+    var rotY = mat4.fromYRotation(mat4.create(), spinAngle2 * Math.PI/180.0);
+    var rotZ = mat4.fromZRotation(mat4.create(), spinAngle2 * Math.PI/180.0);
+    var currentRot;
+
+    if(currentAxis==10) {
+        currentRot = rotX;
+    }
+    else if(currentAxis==11) {
+        currentRot = rotY;
+    }
+    else {
+        currentRot = rotZ;
+    }
+
+
 
     switch (event.key) {
         case "1":
@@ -165,6 +189,7 @@ function keyboardHandler(event) {
                 mat4.multiply(ringCF, transXneg, ringCF);  // ringCF = Trans * ringCF
                 mat4.multiply(chairCF, transXneg, chairCF);
                 mat4.multiply(toastCF, transXneg, toastCF);
+                mat4.multiply(toasterCF, transXneg, toasterCF);
             }
             if(currentObj==1) {
                 mat4.multiply(chairCF, transXneg, chairCF);  // ringCF = Trans * ringCF
@@ -178,6 +203,7 @@ function keyboardHandler(event) {
                 mat4.multiply(ringCF, transXpos, ringCF);  // ringCF = Trans * ringCF
                 mat4.multiply(chairCF, transXpos, chairCF);
                 mat4.multiply(toastCF, transXpos, toastCF);
+                mat4.multiply(toasterCF, transXpos, toasterCF);
             }
             if(currentObj==1) {
                 mat4.multiply(chairCF, transXpos, chairCF);  // ringCF = Trans * ringCF
@@ -191,6 +217,7 @@ function keyboardHandler(event) {
                 mat4.multiply(ringCF, transYneg, ringCF);  // ringCF = Trans * ringCF
                 mat4.multiply(chairCF, transYneg, chairCF);
                 mat4.multiply(toastCF, transYneg, toastCF);
+                mat4.multiply(toasterCF, transYneg, toasterCF);
             }
             if(currentObj==1) {
                 mat4.multiply(chairCF, transYneg, chairCF);  // ringCF = Trans * ringCF
@@ -204,6 +231,7 @@ function keyboardHandler(event) {
                 mat4.multiply(ringCF, transYpos, ringCF);  // ringCF = Trans * ringCF
                 mat4.multiply(chairCF, transYpos, chairCF);
                 mat4.multiply(toastCF, transYpos, toastCF);
+                mat4.multiply(toasterCF, transYpos, toasterCF);
             }
             if(currentObj==1) {
                 mat4.multiply(chairCF, transYpos, chairCF);  // ringCF = Trans * ringCF
@@ -217,6 +245,7 @@ function keyboardHandler(event) {
                 mat4.multiply(ringCF, transZneg, ringCF);  // ringCF = Trans * ringCF
                 mat4.multiply(chairCF, transZneg, chairCF);
                 mat4.multiply(toastCF, transZneg, toastCF);
+                mat4.multiply(toasterCF, transZneg, toasterCF);
             }
             if(currentObj==1) {
                 mat4.multiply(chairCF, transZneg, chairCF);  // ringCF = Trans * ringCF
@@ -230,6 +259,7 @@ function keyboardHandler(event) {
                 mat4.multiply(ringCF, transZpos, ringCF);  // ringCF = Trans * ringCF
                 mat4.multiply(chairCF, transZpos, chairCF);
                 mat4.multiply(toastCF, transZpos, toastCF);
+                mat4.multiply(toasterCF, transZpos, toasterCF);
             }
             if(currentObj==1) {
                 mat4.multiply(chairCF, transZpos, chairCF);  // ringCF = Trans * ringCF
@@ -243,30 +273,32 @@ function keyboardHandler(event) {
             //spinAngle2 = spinAngle2+0.1;
             spinAngle2 = 6;
             if(currentObj==0) {
-                mat4.multiply(ringCF, ringCF, rotZ);  // ringCF = Trans * ringCF
-                mat4.multiply(chairCF, chairCF, rotZ);
-                mat4.multiply(toastCF, toastCF, rotZ);
+                mat4.multiply(ringCF, ringCF, currentRot);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, chairCF, currentRot);
+                mat4.multiply(toastCF, toastCF, currentRot);
+                mat4.multiply(toasterCF, toasterCF, currentRot);
             }
             if(currentObj==1) {
-                mat4.multiply(chairCF, chairCF, rotZ);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, chairCF, currentRot);  // ringCF = Trans * ringCF
             }
             if(currentObj==2)
-                mat4.multiply(toastCF, toastCF, rotZ);  // ringCF = Trans * ringCF
+                mat4.multiply(toastCF, toastCF, currentRot);  // ringCF = Trans * ringCF
             break;
 
         case "R":
             //spinAngle2 = spinAngle2+0.1;
             spinAngle2 = -6;
             if(currentObj==0) {
-                mat4.multiply(ringCF, ringCF, rotZ);  // ringCF = Trans * ringCF
-                mat4.multiply(chairCF, chairCF, rotZ);
-                mat4.multiply(toastCF, toastCF, rotZ);
+                mat4.multiply(ringCF, ringCF, currentRot);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, chairCF, currentRot);
+                mat4.multiply(toastCF, toastCF, currentRot);
+                mat4.multiply(toasterCF, toasterCF, currentRot);
             }
             if(currentObj==1) {
-                mat4.multiply(chairCF, chairCF, rotZ);  // ringCF = Trans * ringCF
+                mat4.multiply(chairCF, chairCF, currentRot);  // ringCF = Trans * ringCF
             }
             if(currentObj==2)
-                mat4.multiply(toastCF, toastCF, rotZ);  // ringCF = Trans * ringCF
+                mat4.multiply(toastCF, toastCF, currentRot);  // ringCF = Trans * ringCF
             break;
     }
     textOut.innerHTML = "Current Location (" + ringCF[12].toFixed(1) + ", "
@@ -281,21 +313,37 @@ function render() {
     //drawSideView();
 
     if(spinAngle<=180)
-        spinAngle += 2;  /* add 1 degree */
+        spinAngle -= 4.5;  /* add 1 degree */
 
     if(moveTo >= 1.5) {
-        toggle = 1;
-    } else if(moveTo < 0) {
-        toggle = 0;
-        spinAngle = 0;
+        toggle = 1; //move down
+    } else if(moveTo <= -1.7) {
+        //toggle = 0;
+        //spinAngle = 0;
+        //moveTo=0;
+        //moveTo2=0;
+        spinAngle = -90;
+        moveTo = -1.7;
+        moveTo2 = -1.6;
+        //move
+        timer++;
     }
 
-
+    if(timer>=100) {
+        timer = 0;
+        toggle = 0;
+        spinAngle = 0;
+        moveTo=0;
+        moveTo2=0;
+    }
 
     if(toggle ==1) {
-        moveTo = moveTo - 0.02;
+        moveTo = moveTo - 0.04;
+        moveTo2 = moveTo2 - 0.02;
+        inc =0.1;
     } else {
-        moveTo = moveTo + 0.02;
+        moveTo = moveTo + inc;
+        inc = inc-0.002;
     }
     requestAnimationFrame(render);
 }
@@ -339,12 +387,19 @@ function drawScene() {
 
             mat4.fromTranslation(tmpMat, vec3.fromValues(0, 0, 0));
             let breadRot = mat4.fromYRotation(mat4.create(), spinAngle * Math.PI/180.0);
-            let breadTranslate = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, moveTo));
+            let breadTranslate = mat4.fromTranslation(mat4.create(), vec3.fromValues(moveTo2, 1, moveTo));
             //mat4.rotateX(mat4.create(), spinAngle * Math.PI/180.0);
             let tmp2 = mat4.multiply(mat4.create(), breadTranslate, breadRot);   // tmp = ringCF * tmpMat
             tmp2 = mat4.multiply(tmp2, toastCF, tmp2);
             objBread.draw(posAttr, colAttr, modelUnif, tmp2);
             globalAxes.draw(posAttr, colAttr, modelUnif, tmp2);
+
+            //let toasterRot = mat4.fromYRotation(mat4.create(), spinAngle * Math.PI/180.0);
+            let toasterTranslate = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
+            let tmpToaster = mat4.multiply(mat4.create(), toasterTranslate, tmpMat);   // tmp = ringCF * tmpMat
+            tmpToaster = mat4.multiply(tmpToaster, toasterCF, tmpToaster);
+            mat4.fromTranslation(tmpMat, vec3.fromValues(0, 0, 0));
+            objToaster.draw(posAttr, colAttr, modelUnif, tmpToaster);
         }
 
 
