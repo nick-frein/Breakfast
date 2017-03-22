@@ -54,6 +54,15 @@ class toaster {
         mat4.translate(this.tCornerTransform, this.tCornerTransform, movetCorner);
         mat4.scale(this.tCornerTransform, this.tCornerTransform, scaletCorner);
 
+
+        this.toasterSideTransform = mat4.create();
+        let moveToasterSide = vec3.fromValues(0, 0, 0);
+        let scaleToasterSide = vec3.fromValues(0.5, 1, 1);
+        let rotToasterSide = vec3.fromValues (0, 1, 0);
+        mat4.fromRotation(this.toasterSideTransform, Math.PI/2, rotToasterSide);
+        mat4.translate(this.toasterSideTransform, this.toasterSideTransform, moveToasterSide);
+        mat4.scale(this.toasterSideTransform, this.toasterSideTransform, scaleToasterSide);
+
         this.tmp = mat4.create();
     }
     /**************************************************************************************************/
@@ -71,6 +80,10 @@ class toaster {
         this.toaster1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
 
+
+
+        mat4.mul(this.tmp, coordFrame, this.toasterSideTransform);
+        this.toaster1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
         mat4.mul(this.tmp, coordFrame, this.tCornerTransform);
         this.tCorner.draw(vertexAttr, colorAttr, modelUniform, this.tmp);

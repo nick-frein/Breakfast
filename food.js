@@ -181,8 +181,10 @@ class food {
         mat4.scale (this.cupHandleTransform, this.cupHandleTransform, scaleCupHandle);
 
         this.coffeeTransform= mat4.create();
-        let moveCoffee = vec3.fromValues (-0.5, 0, 0);
+        let moveCoffee = vec3.fromValues (-0.5, 0, 0.15);
+        let scaleCoffee = vec3.fromValues (1, 1, 0.5);
         mat4.translate (this.coffeeTransform, this.coffeeTransform, moveCoffee);
+        mat4.scale (this.coffeeTransform, this.coffeeTransform, scaleCoffee);
 
 /******************************************************************************************/
 
