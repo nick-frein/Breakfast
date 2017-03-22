@@ -427,6 +427,7 @@ function render() {
             moveTo2 = -2.2;
             //move
             timer++;
+            leverZ -= 0.0075;
         }
 
         if (timer >= 100) {
@@ -442,6 +443,7 @@ function render() {
             moveTo = moveTo - 0.06;
             moveTo2 = moveTo2 - 0.02;
             inc = 0.1;
+
         } else {
             moveTo = moveTo + inc;
             inc = inc - 0.002;
