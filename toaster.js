@@ -16,6 +16,8 @@ class toaster {
             vec3.fromValues(0,0,0), vec3.fromValues(0,0,0));
         this.toasterShadow = new Cube(gl, .6, 1, vec3.fromValues(0.7,0.7,0.7),
             vec3.fromValues(0.7,0.7,0.7), vec3.fromValues(0.7,0.7,0.7));
+        this.leverSlide = new Cube(gl, .6, 1, vec3.fromValues(0,0,0),
+            vec3.fromValues(0,0,0), vec3.fromValues(0,0,0));
         this.tCorner = new Cylinder(gl, .5, 0.5, 0.6, 8, vec3.fromValues(0.6,0.6,0.6),
             vec3.fromValues(0.6,0.6,0.6));
 
@@ -65,6 +67,16 @@ class toaster {
         mat4.translate(this.toasterSideTransform, this.toasterSideTransform, moveToasterSide);
         mat4.scale(this.toasterSideTransform, this.toasterSideTransform, scaleToasterSide);
 
+
+        this.toasterSide2Transform = mat4.create();
+        let moveToasterSide2 = vec3.fromValues(0, 1.5, 0);
+        let scaleToasterSide2 = vec3.fromValues(1, 0.25, 2);
+        //let rotToasterSide = vec3.fromValues (0, 1, 0);
+        //mat4.fromRotation(this.toasterSideTransform, Math.PI/2, rotToasterSide);
+        mat4.translate(this.toasterSide2Transform, this.toasterSide2Transform, moveToasterSide2);
+        mat4.scale(this.toasterSide2Transform, this.toasterSide2Transform, scaleToasterSide2);
+
+
         this.toasterSideShadowTransform = mat4.create();
         let moveToasterSideShadow = vec3.fromValues(0, 0.45, .1);
         let scaleToasterSideShadow = vec3.fromValues(0.95, 0.245, 1.95);
@@ -72,6 +84,24 @@ class toaster {
         //mat4.fromRotation(this.toasterSideTransform, Math.PI/2, rotToasterSide);
         mat4.translate(this.toasterSideShadowTransform, this.toasterSideShadowTransform, moveToasterSideShadow);
         mat4.scale(this.toasterSideShadowTransform, this.toasterSideShadowTransform, scaleToasterSideShadow);
+
+
+        this.toasterSideShadow2Transform = mat4.create();
+        let moveToasterSideShadow2 = vec3.fromValues(0, 1.55, .1);
+        let scaleToasterSideShadow2 = vec3.fromValues(0.95, 0.245, 1.95);
+        //let rotToasterSide = vec3.fromValues (0, 1, 0);
+        //mat4.fromRotation(this.toasterSideTransform, Math.PI/2, rotToasterSide);
+        mat4.translate(this.toasterSideShadow2Transform, this.toasterSideShadow2Transform, moveToasterSideShadow2);
+        mat4.scale(this.toasterSideShadow2Transform, this.toasterSideShadow2Transform, scaleToasterSideShadow2);
+
+
+        this.leverSlideTransform = mat4.create();
+        let moveLeverSlide = vec3.fromValues(0, 0.4, .1);
+        let scaleLeverSlide = vec3.fromValues(0.2, 0.1, 1.5);
+        //let rotToasterSide = vec3.fromValues (0, 1, 0);
+        //mat4.fromRotation(this.toasterSideTransform, Math.PI/2, rotToasterSide);
+        mat4.translate(this.leverSlideTransform, this.leverSlideTransform, moveLeverSlide);
+        mat4.scale(this.leverSlideTransform, this.leverSlideTransform, scaleLeverSlide);
 
         this.tmp = mat4.create();
     }
@@ -89,14 +119,27 @@ class toaster {
         mat4.mul(this.tmp, coordFrame, this.toaster4Transform);
         this.toaster1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
-        mat4.mul(this.tmp, coordFrame, this.toasterSideShadowTransform);
-        this.toasterShadow.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+
+
 
 
 
 
         mat4.mul(this.tmp, coordFrame, this.toasterSideTransform);
         this.toaster1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul(this.tmp, coordFrame, this.toasterSideShadowTransform);
+        this.toasterShadow.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul(this.tmp, coordFrame, this.toasterSide2Transform);
+        this.toaster1.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul(this.tmp, coordFrame, this.toasterSideShadow2Transform);
+        this.toasterShadow.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
+
+        mat4.mul(this.tmp, coordFrame, this.leverSlideTransform);
+        this.leverSlide.draw(vertexAttr, colorAttr, modelUniform, this.tmp);
 
         /*mat4.mul(this.tmp, coordFrame, this.tCornerTransform);
         this.tCorner.draw(vertexAttr, colorAttr, modelUniform, this.tmp);*/

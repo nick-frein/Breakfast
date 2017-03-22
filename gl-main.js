@@ -419,18 +419,15 @@ function render() {
 
         } else if (moveTo <= -1.7) {
             //toggle = 0;
-            spinAngle = -90;
-            //moveTo=0;
-            //moveTo2=0;
-            //spinAngle += 7;
+            spinAngle = -90;  // toast landed on the floor
             moveTo = -1.7;
             moveTo2 = -2.2;
             //move
             timer++;
-            leverZ -= 0.0075;
+            leverZ -= 0.0075; //toaster's lever is pushed back down
         }
 
-        if (timer >= 100) {
+        if (timer >= 100) {  // wait a while before toaster animation repeats
             timer = 0;
             toggle = 0;
             spinAngle = 0;
@@ -521,7 +518,7 @@ function drawScene() {
                 obj.draw(posAttr, colAttr, modelUnif, foodTmp);
                 xPos += 5.5;
             }
-            yPos += -8.5;
+            yPos += -9.25;
         }
 
 
