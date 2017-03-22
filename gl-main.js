@@ -16,6 +16,7 @@ var projUnif, viewUnif, modelUnif;
 
 const IDENTITY = mat4.create();
 var spinAngle, spinAngle2, moveTo, moveTo2;
+var leverZ =0.3;
 var toggle;
 var obj;
 var shaderProg;
@@ -415,6 +416,7 @@ function render() {
 
         if (moveTo >= 2) {
             toggle = 1; //move down
+
         } else if (moveTo <= -1.7) {
             //toggle = 0;
             spinAngle = -90;
@@ -433,6 +435,7 @@ function render() {
             spinAngle = 0;
             moveTo = 0.5;
             moveTo2 = -1;
+            leverZ =0.3;
         }
 
         if (toggle == 1) {
@@ -442,6 +445,8 @@ function render() {
         } else {
             moveTo = moveTo + inc;
             inc = inc - 0.002;
+            if (leverZ < 0.9)
+                leverZ += 0.1;
         }
     }
     requestAnimationFrame(render);
@@ -574,7 +579,7 @@ function drawScene() {
         }
 
 
-        let leverTranslate = mat4.fromTranslation(mat4.create(), vec3.fromValues(-0.75, 0.5, 0.5));
+        let leverTranslate = mat4.fromTranslation(mat4.create(), vec3.fromValues(-0.75, 0.5, leverZ)); // z = 0.5
         let tmpLever = mat4.multiply(mat4.create(), leverTranslate, tmpMat);   // tmp = ringCF * tmpMat
         tmpLever = mat4.multiply(tmpLever, toasterCF, tmpLever);
         //mat4.fromTranslation(tmpMat, vec3.fromValues(0, 0, 0));
