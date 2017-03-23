@@ -30,7 +30,7 @@ class toaster {
         mat4.scale(this.toaster1Transform, this.toaster1Transform, scaleToaster1);
 
         this.toaster2Transform = mat4.create();
-        let moveToaster2 = vec3.fromValues(-0.25, 1, 0.1);
+        let moveToaster2 = vec3.fromValues(-0.2, 1, 0.1);
         let scaleToaster2 = vec3.fromValues(0.3, 1.9, 1.9);
         mat4.translate(this.toaster2Transform, this.toaster2Transform, moveToaster2);
         mat4.scale(this.toaster2Transform, this.toaster2Transform, scaleToaster2);

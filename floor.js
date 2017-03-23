@@ -68,7 +68,7 @@ class floor {
         mat4.scale(this.ceilingTransform, this.ceilingTransform, scaleCeiling);
 
         this.windowTransform = mat4.create();
-        let moveWindow = vec3.fromValues(-3.8, 2, 3);
+        let moveWindow = vec3.fromValues(-3.85, 2, 3);
         let scaleWindow = vec3.fromValues(0.1, 2, 2);
         mat4.translate(this.windowTransform, this.windowTransform, moveWindow);
         mat4.scale(this.windowTransform, this.windowTransform, scaleWindow);
@@ -80,13 +80,13 @@ class floor {
         mat4.scale(this.windowFrameTransform, this.windowFrameTransform, scaleWindowFrame);
 
         this.windowInnerFrameTransform = mat4.create();
-        let moveWindowInnerFrame = vec3.fromValues(-3.7, 2, 3);
+        let moveWindowInnerFrame = vec3.fromValues(-3.8, 2, 3);
         let scaleWindowInnerFrame = vec3.fromValues(0.1, 0.1, 2.5);
         mat4.translate(this.windowInnerFrameTransform, this.windowInnerFrameTransform, moveWindowInnerFrame);
         mat4.scale(this.windowInnerFrameTransform, this.windowInnerFrameTransform, scaleWindowInnerFrame);
 
         this.windowInnerFrame2Transform = mat4.create();
-        let moveWindowInnerFrame2 = vec3.fromValues(-3.7, 2, 3);
+        let moveWindowInnerFrame2 = vec3.fromValues(-3.8, 2, 3);
         let scaleWindowInnerFrame2 = vec3.fromValues(0.1, 2.5, 0.1);
         mat4.translate(this.windowInnerFrame2Transform, this.windowInnerFrame2Transform, moveWindowInnerFrame2);
         mat4.scale(this.windowInnerFrame2Transform, this.windowInnerFrame2Transform, scaleWindowInnerFrame2);
